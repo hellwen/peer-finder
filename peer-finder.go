@@ -76,7 +76,7 @@ func main() {
         suffix = defaultDnsSuffix
     }
 	if *svc == "" || suffix == "" || ns == "" || (*onChange == "" && *onStart == "") {
-		log.Fatalf("Incomplete args, require -on-change and/or -on-start, -service and -ns or an env var for POD_NAMESPACE.")
+		log.Fatalf("Incomplete args, see the --help.")
 	}
 
 	hostname, err := os.Hostname()
