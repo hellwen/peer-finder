@@ -28,7 +28,7 @@ import (
 
 const (
     defaultDnsSuffix = "svc.zeusis.com"
-	pollPeriod       = 1 * time.Second
+    pollPeriod = time.Second * 1
 )
 
 var (
@@ -48,7 +48,8 @@ func lookup(svcName string) (*set.Set, error) {
 	for _, srvRecord := range srvRecords {
 		// The SRV records ends in a "." for the root domain
 		ep := fmt.Sprintf("%v", srvRecord.Target[:len(srvRecord.Target)-1])
-        endpoints.Add(ep)
+        ips, _ := net.LookupIP(ep)
+        endpoints.Add(ep + "," + ips[0].String())
 	}
 	return endpoints, nil
 }
@@ -85,12 +86,15 @@ func main() {
 	}
 
 	myName := strings.Join([]string{hostname, *svc, ns, suffix}, ".")
+    ips, _ := net.LookupIP(myName)
+    myName = myName + "," + ips[0].String()
 	script := *onStart
 	if script == "" {
 		script = *onChange
 		log.Printf("No on-start supplied, on-change %v will be applied on start.", script)
 	}
 	for newPeers, peers := set.New(), set.New(); script != ""; time.Sleep(pollPeriod) {
+
 		newPeers, err = lookup(*svc)
 		if err != nil {
 			log.Printf("%v", err)
