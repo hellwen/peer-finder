@@ -57,13 +57,13 @@ func (s *Set) IsEmpty() bool {
 func (s *Set) Equal(c *Set) bool {
 	s.RLock()
 	defer s.RUnlock()
-    if s.Len() != c.Len() {
-        return false
-    }
+	if s.Len() != c.Len() {
+        	return false
+	}
 	for item := range s.m {
-        if ! c.Has(item) {
-            return false
-        }
+	        if ! c.Has(item) {
+			return false
+		}
 	}
 	return true
 }
@@ -107,8 +107,8 @@ func main() {
 	fmt.Println("无序的切片", s.List())
 	fmt.Println("有序的切片", s.SortList())
 
-    c1 := New()
-    c2 := New()
+	c1 := New()
+	c2 := New()
 
 	c1.Add("0")
 	c1.Add("1")
@@ -117,8 +117,8 @@ func main() {
 	c2.Add("0")
 	c2.Add("1")
 
-    fmt.Printf("Equal1 \ns: %v\nc: %v\nresult: %v\n", s.List(), c1.List(), s.Equal(c1))
-    fmt.Printf("Equal2 \ns: %v\nc: %v\nresult: %v\n", s.List(), c2.List(), s.Equal(c2))
+	fmt.Printf("Equal1 \ns: %v\nc: %v\nresult: %v\n", s.List(), c1.List(), s.Equal(c1))
+	fmt.Printf("Equal2 \ns: %v\nc: %v\nresult: %v\n", s.List(), c2.List(), s.Equal(c2))
 
 	s.Clear()
 	if s.IsEmpty() {

@@ -23,7 +23,7 @@ import (
 	"os/exec"
 	"time"
 	"strings"
-    set "peer-finder/myset"
+	set "peer-finder/myset"
 )
 
 const (
@@ -36,7 +36,7 @@ var (
 	onStart   = flag.String("on-start", "", "Script to run on start, must accept a new line separated list of peers via stdin.")
 	svc       = flag.String("service", "", "Governing service responsible for the DNS records of the domain this pod is in.")
 	namespace = flag.String("ns", "", "The namespace this pod is running in. If unspecified, the POD_NAMESPACE env var is used.")
-	dnsSuffix = flag.String("dns-suffix", "", "The dns suffix this pod is running in. If unspecified, the 'svc.zeusis.com' env var is used.")
+	dnsSuffix = flag.String("dns-suffix", "", "The dns suffix this pod is running in. If unspecified, the 'svc.cluster.local' env var is used.")
 )
 
 func lookup(svcName string) (*set.Set, error) {
@@ -58,8 +58,8 @@ func shellOut(sendStdin, script string) {
 	log.Printf("execing: %v with stdin: %v", script, sendStdin)
 	// TODO: Switch to sending stdin from go
 
-    out, err := exec.Command("bash", "-c", fmt.Sprintf("echo -e '%v' | %v", sendStdin, script)).CombinedOutput()
-    if err != nil {
+	out, err := exec.Command("bash", "-c", fmt.Sprintf("echo -e '%v' | %v", sendStdin, script)).CombinedOutput()
+	if err != nil {
 		log.Fatalf("Failed to execute %v: %v, err: %v", script, string(out), err)
 	}
 	log.Print(string(out))
@@ -72,10 +72,10 @@ func main() {
 	if ns == "" {
 		ns = os.Getenv("POD_NAMESPACE")
 	}
-    suffix := *dnsSuffix
-    if suffix == "" {
-        suffix = defaultDnsSuffix
-    }
+	suffix := *dnsSuffix
+	if suffix == "" {
+        	suffix = defaultDnsSuffix
+	}
 	if *svc == "" || suffix == "" || ns == "" || (*onChange == "" && *onStart == "") {
 		log.Fatalf("Incomplete args, see the --help.")
 	}
@@ -86,8 +86,8 @@ func main() {
 	}
 
 	myName := strings.Join([]string{hostname, *svc, ns, suffix}, ".")
-    ips, _ := net.LookupIP(myName)
-    myName = myName + "," + ips[0].String()
+	ips, _ := net.LookupIP(myName)
+	myName = myName + "," + ips[0].String()
 	script := *onStart
 	if script == "" {
 		script = *onChange
